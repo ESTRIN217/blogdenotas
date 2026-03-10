@@ -39,6 +39,11 @@ public class SimpleAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.context = context;
         this.listaDatos = new ArrayList<>();
     }
+    
+    public void setItems(List<ItemAdjunto> items) {
+        this.listaDatos = new ArrayList<>(items); // Crear una copia para evitar problemas de referencia
+        notifyDataSetChanged(); // Notificar al adaptador que los datos han cambiado
+    }
 
     public void agregarItem(ItemAdjunto item) {
         listaDatos.add(item);
