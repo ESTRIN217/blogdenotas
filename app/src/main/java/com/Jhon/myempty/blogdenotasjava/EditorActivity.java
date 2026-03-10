@@ -5,56 +5,52 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
+import com.google.android.material.button.MaterialButton;
 
 public class EditorActivity extends AppCompatActivity {
 
-    private EditText titulo;
-    private EditText editor;
-    private RecyclerView adjuntosRecyclerView;
+    private EditorViewModel viewModel;
+
+    private EditText txtTitulo;
+    private EditText txtNota;
+    private RecyclerView contenedorAdjuntos;
     private SimpleAdapter adjuntoAdapter;
 
-    private Uri uriDeArchivoActual;
-    
-    public ActivityResultLauncher<Intent> dibujoLauncher;
+    private ActivityResultLauncher<Intent> dibujoLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.editor);
 
+        viewModel = new ViewModelProvider(this).get(EditorViewModel.class);
+
         inicializarVistas();
         configurarLanzadores();
         configurarAdaptadores();
         configurarListeners();
-        manejarIntent();
+
+        observarViewModel();
+
+        if (savedInstanceState == null) {
+            viewModel.cargarOcrearNota(getIntent());
+        }
     }
 
     private void inicializarVistas() {
-        // IDs revertidos a los originales. Asegúrate de que tu editor.xml los tenga.
-        titulo = findViewById(R.id.titulo);
-        editor = findViewById(R.id.editor);
-        adjuntosRecyclerView = findViewById(R.id.adjuntos);
+        txtTitulo = findViewById(R.id.txtTitulo);
+        txtNota = findViewById(R.id.txtNota);
+        contenedorAdjuntos = findViewById(R.id.contenedorAdjuntos);
     }
 
     private void configurarLanzadores() {
@@ -64,9 +60,8 @@ public class EditorActivity extends AppCompatActivity {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                     Uri dibujoUri = result.getData().getData();
                     if (dibujoUri != null) {
-                        // CONSTRUCTOR CORREGIDO: Usar el constructor (int, String)
                         ItemAdjunto nuevoDibujo = new ItemAdjunto(ItemAdjunto.TIPO_DIBUJO, dibujoUri.toString());
-                        adjuntoAdapter.agregarItem(nuevoDibujo);
+                        viewModel.agregarAdjunto(nuevoDibujo);
                     }
                 }
             }
@@ -75,106 +70,78 @@ public class EditorActivity extends AppCompatActivity {
 
     private void configurarAdaptadores() {
         adjuntoAdapter = new SimpleAdapter(this);
-        adjuntosRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adjuntosRecyclerView.setAdapter(adjuntoAdapter);
+        contenedorAdjuntos.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        contenedorAdjuntos.setAdapter(adjuntoAdapter);
     }
 
     private void configurarListeners() {
-        // ID revertido al original. Asegúrate de que tu layout lo tenga.
-        findViewById(R.id.guardar).setOnClickListener(v -> {
-            guardarNota();
-            finish();
+        findViewById(R.id.btnGuardar).setOnClickListener(v -> guardarYSalir());
+        findViewById(R.id.btnAtras).setOnClickListener(v -> gestionarSalida());
+        // Añadir aquí los listeners para la barra de herramientas inferior
+    }
+
+    private void observarViewModel() {
+        viewModel.notaActual.observe(this, nota -> {
+            if (nota != null) {
+                mostrarNota(nota);
+            } else {
+                Toast.makeText(this, "Error al cargar o crear la nota.", Toast.LENGTH_LONG).show();
+                finish();
+            }
         });
     }
 
-    private void manejarIntent() {
-        Intent intent = getIntent();
-        String uriString = intent.getStringExtra("uri_archivo");
-
-        if (uriString != null && !uriString.isEmpty()) {
-            uriDeArchivoActual = Uri.parse(uriString);
-            cargarContenido(uriDeArchivoActual);
-        } else {
-            titulo.setText("");
-            editor.setText("");
-        }
+    private void mostrarNota(Nota nota) {
+        txtTitulo.setText(nota.getTitulo());
+        txtNota.setText(Html.fromHtml(nota.getContenido() != null ? nota.getContenido() : "", Html.FROM_HTML_MODE_COMPACT));
+        adjuntoAdapter.setItems(nota.getAdjuntos());
     }
 
-    private void cargarContenido(Uri uri) {
-        String jsonContent = readContentFromFile(uri);
-        if (jsonContent.isEmpty()) {
-            Toast.makeText(this, "Error al cargar la nota.", Toast.LENGTH_SHORT).show();
-            return;
-        }
+    private void guardarYSalir() {
+        String titulo = txtTitulo.getText().toString().trim();
+        String contenido = Html.toHtml(txtNota.getEditableText(), Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE);
 
-        try {
-            JSONObject jsonObject = new JSONObject(jsonContent);
-            titulo.setText(jsonObject.getString("titulo"));
-            editor.setText(Html.fromHtml(jsonObject.getString("contenido"), Html.FROM_HTML_MODE_LEGACY));
-
-        } catch (Exception e) {
-            Log.e("EditorActivity", "Error al parsear el JSON de la nota", e);
-        }
-    }
-
-    private String readContentFromFile(Uri uri) {
-        File file = new File(uri.getPath());
-        StringBuilder stringBuilder = new StringBuilder();
-        try (FileInputStream fis = new FileInputStream(file);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(fis))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line).append("\n");
-            }
-        } catch (IOException e) {
-            Log.e("EditorActivity", "Error al leer el archivo: " + uri.toString(), e);
-            return "";
-        }
-        return stringBuilder.toString();
-    }
-
-    private void guardarNota() {
-        String tituloNota = titulo.getText().toString().trim();
-        String contenidoNota = Html.toHtml(editor.getEditableText());
-
-        if (tituloNota.isEmpty()) {
+        if (titulo.isEmpty()) {
             Toast.makeText(this, "La nota debe tener un título", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("titulo", tituloNota);
-            jsonObject.put("contenido", contenidoNota);
+        boolean exito = viewModel.guardarNota(titulo, contenido);
 
-        } catch (Exception e) {
-            Log.e("EditorActivity", "Error creando el JSON de la nota", e);
-            return;
-        }
-
-        File file;
-        if (uriDeArchivoActual == null) {
-            File notesDir = new File(getFilesDir(), "notas");
-            if (!notesDir.exists() && !notesDir.mkdirs()) {
-                Toast.makeText(this, "Error al crear directorio", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            String nombreArchivo = System.currentTimeMillis() + ".txt";
-            file = new File(notesDir, nombreArchivo);
-        } else {
-            file = new File(uriDeArchivoActual.getPath());
-        }
-
-        try (FileOutputStream fos = new FileOutputStream(file);
-             OutputStreamWriter writer = new OutputStreamWriter(fos)) {
-            writer.write(jsonObject.toString());
+        if (exito) {
             Toast.makeText(this, "Nota guardada", Toast.LENGTH_SHORT).show();
+            Intent resultIntent = new Intent();
+            resultIntent.putExtra("uri_archivo_guardado", viewModel.getUriDeArchivoActual().toString());
+            setResult(Activity.RESULT_OK, resultIntent);
+            finish();
+        } else {
+            Toast.makeText(this, "Error al guardar la nota", Toast.LENGTH_LONG).show();
+        }
+    }
+    
+    private void gestionarSalida() {
+        String titulo = txtTitulo.getText().toString().trim();
+        String contenido = Html.toHtml(txtNota.getEditableText(), Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE);
 
-            if (uriDeArchivoActual == null) {
-                uriDeArchivoActual = Uri.fromFile(file);
-            }
-        } catch (IOException e) {
-            Log.e("EditorActivity", "Error al guardar la nota", e);
+        if (viewModel.hayCambios(titulo, contenido)) {
+            // Aquí podrías mostrar un diálogo "¿Guardar cambios?"
+            // Por ahora, simplemente guardamos
+            guardarYSalir();
+        } else {
+            finish(); // Salir sin guardar si no hay cambios
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        gestionarSalida();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (adjuntoAdapter != null) {
+            adjuntoAdapter.liberarRecursos();
         }
     }
 }

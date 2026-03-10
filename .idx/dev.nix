@@ -2,14 +2,13 @@
 # see: https://firebase.google.com/docs/studio/customize-workspace
 { pkgs, ... }: {
   # Which nixpkgs channel to use.
-  channel = "stable-24.11"; # or "unstable"
+  channel = "stable-25.05"; # or "unstable"
 
   # Use https://search.nixos.org/packages to find packages
   packages = [
     pkgs.gradle
     pkgs.jdk17
     pkgs.android-tools
-    pkgs.sdkmanager
     # pkgs.go
     # pkgs.python311
     # pkgs.python311Packages.pip
@@ -42,6 +41,9 @@
     previews = {
       enable = true;
       previews = {
+        android = {
+          manager = "android";
+        };
         # web = {
         #   # Example: run "npm run dev" with PORT set to IDX's defined port for previews,
         #   # and show it in IDX's web preview panel
@@ -59,6 +61,7 @@
     workspace = {
       # Runs when a workspace is first created
       onCreate = {
+        accept-licenses = "yes | sdkmanager --licenses";
         # Example: install JS dependencies from NPM
         # npm-install = "npm install";
       };

@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.net.Uri;
+import android.os.Build;
 import android.os.IBinder;
 import android.text.Html;
 import android.util.Log;
@@ -13,26 +14,21 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-
 public class FloatingService extends Service {
+
+    private static final String TAG = "FloatingService";
 
     private WindowManager windowManager;
     private View floatingView;
     private EditText floatingTxtNota;
-    private Uri uriDeArchivoActual;
+    private TextView floatingTitleText;
 
-    public FloatingService() {}
+    private NoteIOHelper noteIOHelper;
+    private Nota notaActual;
+    private Uri uriDeArchivoActual;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -42,6 +38,7 @@ public class FloatingService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        noteIOHelper = new NoteIOHelper(this);
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         setupFloatingView();
     }
@@ -49,25 +46,35 @@ public class FloatingService extends Service {
     private void setupFloatingView() {
         floatingView = LayoutInflater.from(this).inflate(R.layout.floating_editor_layout, null);
 
+        // Determina el tipo de layout param necesario basado en la versión de Android.
+        int layoutFlag = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                WindowManager.LayoutParams.TYPE_PHONE;
+
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                layoutFlag,
+                0, // Flags: sin "FLAG_NOT_FOCUSABLE" para permitir la edición.
                 PixelFormat.TRANSLUCENT);
 
         params.gravity = Gravity.TOP | Gravity.START;
-        params.x = 0;
+        params.x = 100;
         params.y = 100;
 
         windowManager.addView(floatingView, params);
 
-        // IDs revertidos a los originales. Asegúrate de que tu layout los tenga.
         floatingTxtNota = floatingView.findViewById(R.id.floating_txt_nota);
+        floatingTitleText = floatingView.findViewById(R.id.floating_title_text);
+
         floatingView.findViewById(R.id.btn_cerrar_flotante).setOnClickListener(v -> stopSelf());
         floatingView.findViewById(R.id.btn_guardar_flotante).setOnClickListener(v -> guardarNota());
 
-        floatingView.findViewById(R.id.floating_header).setOnTouchListener(new View.OnTouchListener() {
+        setupWindowDrag(floatingView.findViewById(R.id.floating_header), params);
+    }
+
+    private void setupWindowDrag(View header, final WindowManager.LayoutParams params) {
+        header.setOnTouchListener(new View.OnTouchListener() {
             private int initialX;
             private int initialY;
             private float initialTouchX;
@@ -98,75 +105,41 @@ public class FloatingService extends Service {
         if (intent != null && intent.hasExtra("uri_archivo")) {
             String uriString = intent.getStringExtra("uri_archivo");
             uriDeArchivoActual = Uri.parse(uriString);
-            cargarContenido(uriDeArchivoActual);
+            cargarContenido();
         }
-        return START_STICKY;
+        return START_NOT_STICKY; // Evita que el servicio se reinicie automáticamente.
     }
 
-    private void cargarContenido(Uri uri) {
-        String jsonContent = readContentFromFile(uri);
-        if (jsonContent.isEmpty()) {
-            floatingTxtNota.setText("Error al cargar la nota.");
+    private void cargarContenido() {
+        notaActual = noteIOHelper.cargarNota(uriDeArchivoActual);
+        if (notaActual == null) {
+            Log.e(TAG, "Error al cargar la nota desde la URI: " + uriDeArchivoActual);
+            Toast.makeText(this, "Error al cargar la nota.", Toast.LENGTH_SHORT).show();
+            stopSelf();
             return;
         }
 
-        try {
-            JSONObject jsonObject = new JSONObject(jsonContent);
-            String contenido = jsonObject.getString("contenido");
-            floatingTxtNota.setText(Html.fromHtml(contenido, Html.FROM_HTML_MODE_LEGACY));
-        } catch (Exception e) {
-            Log.e("FloatingService", "Error al parsear contenido de la nota", e);
-            floatingTxtNota.setText("Formato de nota inválido.");
-        }
-    }
-
-    private String readContentFromFile(Uri uri) {
-        if (uri == null) return "";
-        File file = new File(uri.getPath());
-        StringBuilder stringBuilder = new StringBuilder();
-        try (FileInputStream fis = new FileInputStream(file);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(fis))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                stringBuilder.append(line).append("\n");
-            }
-        } catch (IOException e) {
-            Log.e("FloatingService", "Error leyendo el archivo", e);
-            return "";
-        }
-        return stringBuilder.toString();
+        floatingTitleText.setText(notaActual.getTitulo());
+        floatingTxtNota.setText(Html.fromHtml(notaActual.getContenido(), Html.FROM_HTML_MODE_COMPACT));
     }
 
     private void guardarNota() {
-        if (uriDeArchivoActual == null) {
-            Toast.makeText(this, "No se puede guardar, URI no válida", Toast.LENGTH_SHORT).show();
+        if (notaActual == null || uriDeArchivoActual == null) {
+            Toast.makeText(this, "No se puede guardar, no hay una nota activa.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        File file = new File(uriDeArchivoActual.getPath());
-        String originalJsonContent = readContentFromFile(uriDeArchivoActual);
-        if (originalJsonContent.isEmpty()) {
-            Toast.makeText(this, "Error: No se pudo leer la nota original para guardar.", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        // Actualiza el contenido del objeto Nota.
+        String contenidoActualizado = Html.toHtml(floatingTxtNota.getText(), Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE);
+        notaActual.setContenido(contenidoActualizado);
 
-        try {
-            JSONObject jsonObject = new JSONObject(originalJsonContent);
-            String contenidoActualizado = Html.toHtml(floatingTxtNota.getText());
-            jsonObject.put("contenido", contenidoActualizado);
+        // Guarda el objeto Nota completo usando el helper.
+        boolean exito = noteIOHelper.guardarNota(notaActual, uriDeArchivoActual);
 
-            try (FileOutputStream fos = new FileOutputStream(file, false);
-                 OutputStreamWriter writer = new OutputStreamWriter(fos)) {
-                writer.write(jsonObject.toString());
-                Toast.makeText(this, "Nota guardada", Toast.LENGTH_SHORT).show();
-            } catch (IOException e) {
-                Log.e("FloatingService", "Error al guardar la nota", e);
-                Toast.makeText(this, "Error al guardar", Toast.LENGTH_SHORT).show();
-            }
-
-        } catch (Exception e) {
-            Log.e("FloatingService", "Error al actualizar el JSON para guardar", e);
-            Toast.makeText(this, "Error en el formato de la nota", Toast.LENGTH_SHORT).show();
+        if (exito) {
+            Toast.makeText(this, "Nota guardada", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Error al guardar la nota", Toast.LENGTH_LONG).show();
         }
     }
 
