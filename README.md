@@ -40,5 +40,3 @@ Compatibilidad: Diseñado para funcionar perfectamente en versiones modernas de 
 [ ] Sincronización básica con la nube.
 
 [ ] Widget para la pantalla de inicio.
-
-Este projecto es compilado en Android Code Studio
