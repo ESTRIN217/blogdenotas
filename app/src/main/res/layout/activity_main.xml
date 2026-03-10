@@ -25,12 +25,12 @@
                  android:orientation="horizontal"
                  android:paddingHorizontal="12dp">
 
-                <Button
-                     android:layout_height="48dp"
-                     android:layout_width="48dp"
+                <com.google.android.material.button.MaterialButton
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
                      app:icon="@drawable/menu_24px"
-                     style="?attr/materialIconButtonStyle"
-                     android:id="@+id/navegation_menu" />
+                     style="@style/Widget.Material3.Button.IconButton"
+                     android:id="@+id/btnOpenMenu" />
 
                 <com.google.android.material.textfield.TextInputLayout
                      android:layout_height="wrap_content"
@@ -58,20 +58,20 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <Button
-                     android:layout_height="48dp"
-                     android:layout_width="48dp"
+                <com.google.android.material.button.MaterialButton
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
                      app:icon="@drawable/outline_view_agenda"
                      android:contentDescription="@string/modoVistaTargeta"
-                     style="?attr/materialIconButtonStyle"
-                     android:id="@+id/modoVistaTargeta" />
+                     style="@style/Widget.Material3.Button.IconButton"
+                     android:id="@+id/btnToggleView" />
 
-                <Button
-                     android:layout_height="48dp"
-                     android:layout_width="48dp"
+                <com.google.android.material.button.MaterialButton
+                     android:layout_height="wrap_content"
+                     android:layout_width="wrap_content"
                      app:icon="@drawable/import_export"
-                     style="?attr/materialIconButtonStyle"
-                     android:id="@+id/orden" />
+                     style="@style/Widget.Material3.Button.IconButton"
+                     android:id="@+id/btnSort" />
 
             </LinearLayout>
 

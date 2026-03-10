@@ -14,17 +14,17 @@
     <LinearLayout
         android:id="@+id/barraSuperior"
         android:layout_width="match_parent"
-        android:layout_height="64dp" 
+        android:layout_height="?attr/actionBarSize"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="8dp"
         app:layout_scrollFlags="scroll|enterAlways">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAtras"
-            style="?attr/materialIconButtonStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/volver_atras"
             app:icon="@drawable/arrow_back_24px" />
 
@@ -33,35 +33,35 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDeshacer"
-            style="?attr/materialIconButtonStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/deshacer"
             app:icon="@drawable/undo_24px" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnRehacer"
-            style="?attr/materialIconButtonStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/rehacer"
             app:icon="@drawable/redo_24px" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnGuardar"
-            style="?attr/materialIconButtonStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/guardar_nota"
             app:icon="@drawable/save_24px" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/menu"
-            style="?attr/materialIconButtonStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="@string/mas_opciones"
             app:icon="@drawable/more_vert" />
 
@@ -117,7 +117,7 @@
                  android:textColor="?attr/colorOnSurface"
                  android:scrollbars="none"
                  android:background="@android:color/transparent"
-                 android:gravity="top|start"
+                 android.gravity="top|start"
                  android:hint="@string/comienza_a_escribir"
                  android:minHeight="200dp"
                  android:textColorHint="?attr/colorOnSurfaceVariant"
@@ -135,46 +135,46 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom"
-    android:backgroundTint="?attr/colorSurfaceContainer"
+    android.backgroundTint="?attr/colorSurfaceContainer"
     app:elevation="3dp"
     app:layout_behavior="com.google.android.material.behavior.HideViewOnScrollBehavior">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="?attr/actionBarSize"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingHorizontal="4dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/añadir"
-            style="?attr/materialIconButtonStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="Añadir elemento"
             app:icon="@drawable/outline_add_box" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/paleta"
-            style="?attr/materialIconButtonStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="Cambiar color"
             app:icon="@drawable/outline_palette" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/text_style"
-            style="?attr/materialIconButtonStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="Formato de texto"
             app:icon="@drawable/text_format" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/text_to_speech"
-            style="?attr/materialIconButtonStyle"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            style="@style/Widget.Material3.Button.IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:contentDescription="Leer texto"
             app:icon="@drawable/text_to_speech_24px" />
 

@@ -37,7 +37,10 @@ dependencies {
     implementation(libs.androidx.documentfile)
     implementation(libs.androidx.recyclerview)
     implementation(libs.glide)
-    implementation("org.json:json:20251224")
+    
+    // Añadida para la serialización y deserialización de objetos Nota a formato JSON
+    implementation("com.google.code.gson:gson:2.10.1")
+
     // Use KSP for Glide 5.x annotation processing
     ksp("com.github.bumptech.glide:ksp:5.0.5")
 }

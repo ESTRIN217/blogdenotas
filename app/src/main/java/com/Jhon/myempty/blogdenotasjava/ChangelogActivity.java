@@ -14,12 +14,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class ChangelogActivity extends AppCompatActivity {
-
     private MaterialToolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        androidx.activity.EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_changelog);
 
@@ -29,6 +27,10 @@ public class ChangelogActivity extends AppCompatActivity {
         List<Cambio> listaCambios = new ArrayList<>();
         
         // AQUÍ AGREGAS TUS VERSIONES
+        listaCambios.add(new Cambio("1.11.2 General", "10/03/2026", "1. Refactorización masiva de la arquitectura de la aplicación.\n" +
+              "2. Se implementó el patrón MVVM (Model-View-ViewModel) en las pantallas principales (MainActivity, EditorActivity) para mejorar la estabilidad y prevenir la pérdida de datos.\n" +
+              "3. Se corrigieron errores críticos de bloqueo y corrupción de datos en el editor de notas flotante (FloatingService).\n" +
+              "4. Se modernizó y limpió el código base, eliminando prácticas obsoletas y mejorando el rendimiento general."));
         listaCambios.add(new Cambio("1.11.0 General", "08 de febrero de 2026", "1. REVISIÓN VISUALES GENERALES.\n" + 
         "2. SE REVISO EL ICONO MONOCROMÁTICO.\n" +
         "3. SE MEJORO LA CARGA DE ARCHIVOS Y EL GUARDADO DE ESTOS.\n" +
