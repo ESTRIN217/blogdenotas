@@ -2,88 +2,85 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
     android:fitsSystemWindows="true">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- Contenedor Principal (Toolbar + Lienzo) -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="60dp">
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorSurfaceContainer"
-        app:elevation="0dp"
-        android:id="@+id/topBar"
-        app:layout_constraintTop_toTopOf="parent">
-        <LinearLayout
-            android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <!-- Barra de Herramientas Superior -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/topBar"
             android:layout_width="match_parent"
-            android:orientation="horizontal"
-            >
+            android:layout_height="wrap_content">
 
-            <Button
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                app:icon="@drawable/arrow_back_24px"
-                android:contentDescription="@string/volver_atras"
-                style="?attr/materialIconButtonStyle"
-                android:id="@+id/back" />
+            <com.google.android.material.appbar.MaterialToolbar
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize">
 
-            <Space
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_weight="1" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
-            <Button
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                app:icon="@drawable/undo_24px"
-                android:contentDescription="@string/deshacer"
-                style="?attr/materialIconButtonStyle"
-                android:id="@+id/undo" />
+                    <ImageButton
+                        android:id="@+id/back"
+                        style="@style/Widget.Material3.Button.IconButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/arrow_back_24px"
+                        android:contentDescription="@string/volver_atras"/>
 
-            <Button
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                app:icon="@drawable/redo_24px"
-                android:contentDescription="@string/rehacer"
-                style="?attr/materialIconButtonStyle"
-                android:id="@+id/redo" />
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
 
-            <Button
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                app:icon="@drawable/outline_done"
-                style="?attr/materialIconButtonStyle"
-                android:id="@+id/btnDone" />
+                    <ImageButton
+                        android:id="@+id/undo"
+                        style="@style/Widget.Material3.Button.IconButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/undo_24px"
+                        android:contentDescription="@string/deshacer"/>
 
-            <Button
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                app:icon="@drawable/more_vert"
-                android:contentDescription="@string/mas_opciones"
-                style="?attr/materialIconButtonStyle"
-                android:id="@+id/more" />
+                    <ImageButton
+                        android:id="@+id/redo"
+                        style="@style/Widget.Material3.Button.IconButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/redo_24px"
+                        android:contentDescription="@string/rehacer"/>
 
-        </LinearLayout>
-</com.google.android.material.appbar.AppBarLayout>
+                    <ImageButton
+                        android:id="@+id/btnDone"
+                        style="@style/Widget.Material3.Button.IconButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/outline_done"
+                        android:contentDescription="Guardar Dibujo"/>
 
+                </LinearLayout>
+            </com.google.android.material.appbar.MaterialToolbar>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <!-- Lienzo de Dibujo -->
         <com.Jhon.myempty.blogdenotasjava.LienzoView
+            android:id="@+id/lienzo" 
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_width="0dp"
-            android:background="@android:color/white"
             android:layout_weight="1"
-            android:id="@+id/lienzo"
-            app:layout_constraintTop_toBottomOf="@id/topBar"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-        />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:background="@android:color/white"/>
+
+    </LinearLayout>
+
+    <!-- Panel Inferior de Herramientas (BottomSheet) -->
     <LinearLayout
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
@@ -92,76 +89,22 @@
         android:orientation="vertical"
         android:elevation="16dp"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="40dp"
+        app:behavior_peekHeight="56dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabLayoutHerramientas"
+        
+        <!-- Agarre para el BottomSheet -->
+        <com.google.android.material.bottomsheet.BottomSheetDragHandleView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabMode="fixed"
-            app:tabGravity="fill" />
+            android:layout_height="wrap_content"/>
 
-<LinearLayout
+        <LinearLayout
             android:id="@+id/panelControles"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnAccionDeseleccionar"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Deseleccionar todo"
-                android:textColor="?attr/colorPrimary"
-                android:visibility="gone"
-                app:iconGravity="textStart"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnAccionBorrarLienzo"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Borrar todo el lienzo"
-                android:textColor="?attr/colorError"
-                android:visibility="gone"
-                app:icon="@drawable/delete_24px"
-                app:iconGravity="textStart"/>
-
-            <LinearLayout
-                android:id="@+id/seccionColores"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Colores"
-                    android:layout_marginBottom="8dp"
-                    android:textStyle="bold" />
-
-                <HorizontalScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scrollbars="none">
-
-                    <LinearLayout
-                        android:id="@+id/contenedorColores"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-                        </LinearLayout>
-                </HorizontalScrollView>
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="16dp"/>
-
+            <!-- Sección de Grosor -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -173,8 +116,44 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:valueFrom="1.0"
-                android:valueTo="80.0"
-                android:stepSize="1.0" />
+                android:valueTo="100.0"
+                android:stepSize="1.0"
+                android:value="12.0"/>
+
+            <!-- Sección de Colores -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Colores"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:textStyle="bold" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
+                <LinearLayout
+                    android:id="@+id/contenedorColores"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <!-- Los botones de colores se añadirán aquí programáticamente -->
+                </LinearLayout>
+            </HorizontalScrollView>
+
+             <!-- Acciones Adicionales -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAccionBorrarLienzo"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Borrar todo el lienzo"
+                android:textColor="?attr/colorError"
+                app:icon="@drawable/delete_24px"
+                app:iconGravity="textStart"/>
 
         </LinearLayout>
 
