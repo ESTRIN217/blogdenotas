@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 
+import java.util.List;
+
 public class EditorActivity extends AppCompatActivity {
 
     private EditorViewModel viewModel;
@@ -26,7 +28,7 @@ public class EditorActivity extends AppCompatActivity {
     private RecyclerView contenedorAdjuntos;
     private SimpleAdapter adjuntoAdapter;
 
-    private ActivityResultLauncher<Intent> dibujoLauncher;
+    public ActivityResultLauncher<Intent> dibujoLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

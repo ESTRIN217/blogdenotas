@@ -1,6 +1,7 @@
 package com.Jhon.myempty.blogdenotasjava;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.util.Log;
@@ -97,10 +98,10 @@ public class MainViewModel extends AndroidViewModel {
 
         switch (criterio) {
             case 0: // Modificación descendente
-                Collections.sort(notasParaOrdenar, Comparator.comparingLong(nota -> new File(Uri.parse(nota.getUri()).getPath()).lastModified()).reversed());
+                Collections.sort(notasParaOrdenar, Comparator.comparingLong((Nota nota) -> new File(Uri.parse(nota.getUri()).getPath()).lastModified()).reversed());
                 break;
             case 1: // Modificación ascendente
-                Collections.sort(notasParaOrdenar, Comparator.comparingLong(nota -> new File(Uri.parse(nota.getUri()).getPath()).lastModified()));
+                Collections.sort(notasParaOrdenar, Comparator.comparingLong((Nota nota) -> new File(Uri.parse(nota.getUri()).getPath()).lastModified()));
                 break;
             case 2: // Orden personalizado
                 String ordenGuardado = sharedPreferences.getString("orden_personalizado", "");
