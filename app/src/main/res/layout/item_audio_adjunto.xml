@@ -14,7 +14,7 @@
          android:gravity="center_vertical"
          android:orientation="horizontal">
         
-        <Button
+        <com.google.android.material.button.MaterialButton
              android:layout_height="wrap_content"
              android:layout_width="wrap_content"
              app:icon="@drawable/play_circle_outline"
@@ -39,7 +39,7 @@
              android:id="@+id/txtDuracion"
              android:text="00:00" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
              android:layout_height="wrap_content"
              android:layout_width="wrap_content"
              app:icon="@drawable/close_24px"

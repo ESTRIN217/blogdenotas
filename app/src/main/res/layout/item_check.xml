@@ -14,7 +14,7 @@
          android:orientation="horizontal"
          android:id="@+id/coordinator">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
              android:layout_height="wrap_content"
              android:layout_width="wrap_content"
              app:icon="@drawable/drag_indicator"
@@ -22,7 +22,7 @@
              android:contentDescription="Arrastrar"
              android:id="@+id/drag" />
 
-        <CheckBox
+        <com.google.android.material.checkbox.MaterialCheckBox
              android:layout_height="wrap_content"
              android:layout_width="wrap_content"
              android:id="@+id/chkEstado" />
@@ -40,7 +40,7 @@
             android:inputType="textCapSentences|textMultiLine"
             android:importantForAutofill="no"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
              android:layout_height="wrap_content"
              android:layout_width="wrap_content"
              app:icon="@drawable/close_24px"

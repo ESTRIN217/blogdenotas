@@ -25,19 +25,17 @@
              android:orientation="horizontal"
              android:layout_gravity="top|end">
 
-            <Button
+            <ImageView
                  android:layout_height="48dp"
                  android:layout_width="48dp"
-                 app:icon="@drawable/round_edit"
-                 style="?attr/materialIconButtonStyle"
+                 app:srcCompat="@drawable/round_edit"
                  android:id="@+id/btnEditar" />
 
-            <Button
+            <ImageView
                  android:layout_height="48dp"
                  android:layout_width="48dp"
-                 app:icon="@drawable/delete_24px"
-                 app:iconTint="?attr/colorError"
-                 style="?attr/materialIconButtonStyle"
+                 app:srcCompat="@drawable/delete_24px"
+                 app:tint="?attr/colorError"
                  android:id="@+id/btnEliminar" />
 
         </LinearLayout>

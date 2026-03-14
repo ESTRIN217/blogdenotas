@@ -57,4 +57,9 @@
     <string name="desarrollado_por">Developed by</string>
     <string name="ver_en_gitHub">View on GitHub</string>
     <string name="registro_de_cambios">Change Log</string>
+    <string name="deshacer">Undo</string>
+    <string name="volver_atras">Go back</string>
+    <string name="rehacer">Redo</string>
+    <string name="guardar_nota">Save note</string>
+    <string name="mas_opciones">More options</string>
 </resources>

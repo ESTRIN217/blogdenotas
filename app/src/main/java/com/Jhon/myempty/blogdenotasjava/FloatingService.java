@@ -120,7 +120,11 @@ public class FloatingService extends Service {
         }
 
         floatingTitleText.setText(notaActual.getTitulo());
-        floatingTxtNota.setText(Html.fromHtml(notaActual.getContenido(), Html.FROM_HTML_MODE_COMPACT));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            floatingTxtNota.setText(Html.fromHtml(notaActual.getContenido(), Html.FROM_HTML_MODE_COMPACT));
+        } else {
+            floatingTxtNota.setText(Html.fromHtml(notaActual.getContenido()));
+        }
     }
 
     private void guardarNota() {
@@ -130,7 +134,12 @@ public class FloatingService extends Service {
         }
 
         // Actualiza el contenido del objeto Nota.
-        String contenidoActualizado = Html.toHtml(floatingTxtNota.getText(), Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE);
+        String contenidoActualizado;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            contenidoActualizado = Html.toHtml(floatingTxtNota.getText(), Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE);
+        } else {
+            contenidoActualizado = Html.toHtml(floatingTxtNota.getText());
+        }
         notaActual.setContenido(contenidoActualizado);
 
         // Guarda el objeto Nota completo usando el helper.

@@ -6,8 +6,8 @@
 
   # Use https://search.nixos.org/packages to find packages
   packages = [
-    pkgs.gradle
-    pkgs.jdk17
+    pkgs.gradle-completion
+    pkgs.jdk21
     pkgs.android-tools
     # pkgs.go
     # pkgs.python311
@@ -20,7 +20,7 @@
  
     env = {
     
-    JAVA_HOME = "${pkgs.jdk17}";
+    JAVA_HOME = "${pkgs.jdk21}";
   };
 
 
@@ -42,6 +42,7 @@
       enable = true;
       previews = {
         android = {
+          command = ["android" "run" "--machine" "-d" "android" "-d" "localhost:5555"];
           manager = "android";
         };
         # web = {

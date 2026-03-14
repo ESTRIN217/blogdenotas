@@ -98,10 +98,24 @@ public class MainViewModel extends AndroidViewModel {
 
         switch (criterio) {
             case 0: // Modificación descendente
-                Collections.sort(notasParaOrdenar, Comparator.comparingLong((Nota nota) -> new File(Uri.parse(nota.getUri()).getPath()).lastModified()).reversed());
+                Collections.sort(notasParaOrdenar, new Comparator<Nota>() {
+                    @Override
+                    public int compare(Nota o1, Nota o2) {
+                        long f1 = new File(Uri.parse(o1.getUri()).getPath()).lastModified();
+                        long f2 = new File(Uri.parse(o2.getUri()).getPath()).lastModified();
+                        return Long.compare(f2, f1);
+                    }
+                });
                 break;
             case 1: // Modificación ascendente
-                Collections.sort(notasParaOrdenar, Comparator.comparingLong((Nota nota) -> new File(Uri.parse(nota.getUri()).getPath()).lastModified()));
+                Collections.sort(notasParaOrdenar, new Comparator<Nota>() {
+                    @Override
+                    public int compare(Nota o1, Nota o2) {
+                        long f1 = new File(Uri.parse(o1.getUri()).getPath()).lastModified();
+                        long f2 = new File(Uri.parse(o2.getUri()).getPath()).lastModified();
+                        return Long.compare(f1, f2);
+                    }
+                });
                 break;
             case 2: // Orden personalizado
                 String ordenGuardado = sharedPreferences.getString("orden_personalizado", "");

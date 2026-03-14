@@ -109,7 +109,7 @@
                  android:text="ESTRIN217"
                  android:textStyle="bold" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                  android:layout_height="wrap_content"
                  android:layout_width="wrap_content"
                  app:icon="@drawable/round_language"

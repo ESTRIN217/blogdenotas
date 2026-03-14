@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Bloco de Notas</string>
     <string name="buscar_nota">Pesquisar no Bloco de Notas</string>
@@ -56,4 +57,10 @@
     <string name="info">Este app é um Bloco de Notas criado com a ajuda do Google Gemini, utilizando Material Design 3. Compilado em um dispositivo móvel através do Android Code Studio.</string>
     <string name="desarrollado_por">Desenvolvido por</string>
     <string name="ver_en_gitHub">Ver no GitHub</string>
+    <string name="registro_de_cambios">Registro de alterações</string>
+    <string name="deshacer">Desfazer</string>
+    <string name="volver_atras">Voltar</string>
+    <string name="rehacer">Refazer</string>
+    <string name="guardar_nota">Salvar nota</string>
+    <string name="mas_opciones">Mais opções</string>
 </resources>

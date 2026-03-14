@@ -3,11 +3,13 @@ package com.Jhon.myempty.blogdenotasjava;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,6 +49,16 @@ public class EditorActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             viewModel.cargarOcrearNota(getIntent());
         }
+
+        // This callback will only be called when MyLifecycleOwner is STARTED. 
+        OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
+            @Override
+            public void handleOnBackPressed() {
+                // Handle the back button event
+                gestionarSalida();
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
     private void inicializarVistas() {
@@ -95,13 +107,22 @@ public class EditorActivity extends AppCompatActivity {
 
     private void mostrarNota(Nota nota) {
         txtTitulo.setText(nota.getTitulo());
-        txtNota.setText(Html.fromHtml(nota.getContenido() != null ? nota.getContenido() : "", Html.FROM_HTML_MODE_COMPACT));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            txtNota.setText(Html.fromHtml(nota.getContenido() != null ? nota.getContenido() : "", Html.FROM_HTML_MODE_COMPACT));
+        } else {
+            txtNota.setText(Html.fromHtml(nota.getContenido() != null ? nota.getContenido() : ""));
+        }
         adjuntoAdapter.setItems(nota.getAdjuntos());
     }
 
     private void guardarYSalir() {
         String titulo = txtTitulo.getText().toString().trim();
-        String contenido = Html.toHtml(txtNota.getEditableText(), Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE);
+        String contenido;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            contenido = Html.toHtml(txtNota.getEditableText(), Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE);
+        } else {
+            contenido = Html.toHtml(txtNota.getEditableText());
+        }
 
         if (titulo.isEmpty()) {
             Toast.makeText(this, "La nota debe tener un título", Toast.LENGTH_SHORT).show();
@@ -123,7 +144,12 @@ public class EditorActivity extends AppCompatActivity {
     
     private void gestionarSalida() {
         String titulo = txtTitulo.getText().toString().trim();
-        String contenido = Html.toHtml(txtNota.getEditableText(), Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE);
+        String contenido;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            contenido = Html.toHtml(txtNota.getEditableText(), Html.TO_HTML_PARAGRAPH_LINES_CONSECUTIVE);
+        } else {
+            contenido = Html.toHtml(txtNota.getEditableText());
+        }
 
         if (viewModel.hayCambios(titulo, contenido)) {
             // Aquí podrías mostrar un diálogo "¿Guardar cambios?"
@@ -132,11 +158,6 @@ public class EditorActivity extends AppCompatActivity {
         } else {
             finish(); // Salir sin guardar si no hay cambios
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        gestionarSalida();
     }
 
     @Override

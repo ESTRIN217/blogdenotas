@@ -60,7 +60,7 @@
                         android:layout_height="48dp"
                         android:layout_width="48dp"
                         android:padding="12dp"
-                        android:tint="?attr/colorPrimary"
+                        app:tint="?attr/colorPrimary"
                         android:background="@drawable/bottom_background"
                         android:src="@drawable/outline_palette" />
 
@@ -101,7 +101,7 @@
                             android:layout_width="48dp"
                             android:padding="12dp"
                             android:src="@drawable/bedtime_24px"
-                            android:tint="?attr/colorPrimary"
+                            app:tint="?attr/colorPrimary"
                             android:background="@drawable/bottom_background" />
 
                         <com.google.android.material.textview.MaterialTextView
@@ -174,7 +174,7 @@
                         android:layout_width="48dp"
                         android:padding="12dp"
                         android:src="@drawable/update_24px"
-                        android:tint="?attr/colorPrimary"
+                        app:tint="?attr/colorPrimary"
                         android:background="@drawable/bottom_background" />
 
                     <com.google.android.material.textview.MaterialTextView
@@ -205,7 +205,7 @@
                         android:layout_width="48dp"
                         android:padding="12dp"
                         android:src="@drawable/info"
-                        android:tint="?attr/colorPrimary"
+                        app:tint="?attr/colorPrimary"
                         android:background="@drawable/bottom_background" />
 
                     <com.google.android.material.textview.MaterialTextView

@@ -65,7 +65,7 @@
         android:layout_gravity="bottom"
         android:padding="16dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSiguiente"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
