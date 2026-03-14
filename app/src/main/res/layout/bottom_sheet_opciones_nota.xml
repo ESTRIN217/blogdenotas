@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/opcion_compartir"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Compartir"
+        app:icon="@drawable/share_24px"
+        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/opcion_eliminar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Eliminar"
+        app:icon="@drawable/delete_24px"
+        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/opcion_flotante"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Abrir modo flotante"
+        app:icon="@drawable/open_in_new"
+        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"/>
+
+</LinearLayout>

@@ -94,7 +94,9 @@ public class MainActivity extends AppCompatActivity {
                     abrirEditor(nota.getUri());
                 }
             },
-            (view, nota, position) -> adaptador.toggleSeleccion(nota, position)
+            (view, nota, position) -> {
+                mostrarOpcionesNota(nota);
+            }
         );
         recyclerNotas.setAdapter(adaptador);
         configurarItemTouchHelper();
@@ -208,5 +210,44 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         new ItemTouchHelper(callback).attachToRecyclerView(recyclerNotas);
+    }
+    
+    private void mostrarOpcionesNota(final Nota nota) {
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        View sheetView = getLayoutInflater().inflate(R.layout.bottom_sheet_opciones_nota, null);
+        bottomSheetDialog.setContentView(sheetView);
+
+        sheetView.findViewById(R.id.opcion_compartir).setOnClickListener(v -> {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, nota.getTitulo() + "\n" + nota.getContenido());
+            sendIntent.setType("text/plain");
+            Intent shareIntent = Intent.createChooser(sendIntent, null);
+            startActivity(shareIntent);
+            bottomSheetDialog.dismiss();
+        });
+
+        sheetView.findViewById(R.id.opcion_eliminar).setOnClickListener(v -> {
+            // Suponiendo que el viewModel tiene un método para eliminar y recargar.
+            // viewModel.eliminarNota(nota); 
+            bottomSheetDialog.dismiss();
+        });
+
+        sheetView.findViewById(R.id.opcion_flotante).setOnClickListener(v -> {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M && !android.provider.Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                           android.net.Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+            } else {
+                 Intent intent = new Intent(this, FloatingService.class);
+                 if (nota.getUri() != null && !nota.getUri().isEmpty()) {
+                    intent.putExtra("uri_archivo", nota.getUri());
+                 }
+                 startService(intent);
+            }
+            bottomSheetDialog.dismiss();
+        });
+
+        bottomSheetDialog.show();
     }
 }
